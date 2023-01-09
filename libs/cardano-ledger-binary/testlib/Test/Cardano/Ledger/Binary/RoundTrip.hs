@@ -12,6 +12,7 @@
 -- | Defines reusable abstractions for testing RoundTrip properties of CBOR instances
 module Test.Cardano.Ledger.Binary.RoundTrip (
   roundTripSpec,
+  roundTripRangeSpec,
   roundTripFailureExpectation,
   roundTripExpectation,
   roundTripCborExpectation,
@@ -32,6 +33,11 @@ module Test.Cardano.Ledger.Binary.RoundTrip (
   embedTrip,
   embedTripAnn,
   embedTripLabel,
+  roundTripRangeExpectation,
+  roundTripCborRangeExpectation,
+  roundTripFailureCborRangeExpectation,
+  roundTripFailureCborExpectation,
+  roundTripFailureCborExpectation',
 )
 where
 
@@ -60,6 +66,17 @@ roundTripSpec ::
 roundTripSpec trip =
   prop (show (typeRep $ Proxy @t)) $ roundTripExpectation trip
 
+-- | Tests the roundtrip property using QuickCheck generators for specific range of versions
+roundTripRangeSpec ::
+  forall t.
+  (Show t, Eq t, Typeable t, Arbitrary t) =>
+  Trip t t ->
+  Version ->
+  Version ->
+  Spec
+roundTripRangeSpec trip fromVersion toVersion =
+  prop (show (typeRep $ Proxy @t)) $ roundTripRangeExpectation trip fromVersion toVersion
+
 -- | Tests the embedtrip property using QuickCheck generators
 embedTripSpec ::
   forall a b.
@@ -76,8 +93,8 @@ embedTripSpec encVersion decVersion trip f =
     embedTripExpectation encVersion decVersion trip f
 
 -- Tests that a decoder error happens
-roundTripFailureExpectation :: forall a. (ToCBOR a, FromCBOR a) => Version -> a -> Expectation
-roundTripFailureExpectation version x =
+roundTripFailureCborExpectation' :: forall a. (ToCBOR a, FromCBOR a) => Version -> a -> Expectation
+roundTripFailureCborExpectation' version x =
   case roundTrip version (cborTrip @a) x of
     Left _ -> pure ()
     Right _ ->
@@ -86,18 +103,72 @@ roundTripFailureExpectation version x =
 
 -- | Verify that round triping through the binary form holds for all versions starting
 -- with `shelleyProtVer`.
---
--- In other words check that:
---
--- > deserialize version . serialize version === id
--- > serialize version . deserialize version . serialize version === serialize version
 roundTripExpectation ::
   (Show t, Eq t, Typeable t, HasCallStack) =>
   Trip t t ->
   t ->
   Expectation
-roundTripExpectation trip t =
-  forM_ [natVersion @2 .. maxBound] $ \version ->
+roundTripExpectation trip = roundTripRangeExpectation trip minBound maxBound
+
+roundTripFailureCborExpectation ::
+  forall t.
+  (ToCBOR t, FromCBOR t, HasCallStack) =>
+  t ->
+  Expectation
+roundTripFailureCborExpectation = roundTripFailureExpectation (cborTrip @t @t)
+
+roundTripFailureCborRangeExpectation ::
+  forall t.
+  (ToCBOR t, FromCBOR t, HasCallStack) =>
+  -- | From Version
+  Version ->
+  -- | To Version
+  Version ->
+  t ->
+  Expectation
+roundTripFailureCborRangeExpectation = roundTripFailureRangeExpectation (cborTrip @t)
+
+roundTripFailureExpectation ::
+  (ToCBOR t, HasCallStack) =>
+  Trip t t ->
+  t ->
+  Expectation
+roundTripFailureExpectation trip = roundTripFailureRangeExpectation trip minBound maxBound
+
+roundTripFailureRangeExpectation ::
+  forall t.
+  (ToCBOR t, HasCallStack) =>
+  Trip t t ->
+  -- | From Version
+  Version ->
+  -- | To Version
+  Version ->
+  t ->
+  Expectation
+roundTripFailureRangeExpectation trip fromVersion toVersion t =
+  forM_ [fromVersion .. toVersion] $ \version ->
+    case roundTrip version trip t of
+      Left _ -> pure ()
+      Right _ -> expectationFailure $ "Should not have deserialized: " <> showExpr (CBORBytes (serialize' version t))
+
+-- | Verify that round triping through the binary form holds for a range of versions.
+--
+-- In other words check that:
+--
+-- > deserialize version . serialize version === id
+-- > serialize version . deserialize version . serialize version === serialize version
+roundTripRangeExpectation ::
+  forall t.
+  (Show t, Eq t, Typeable t, HasCallStack) =>
+  Trip t t ->
+  -- | From Version
+  Version ->
+  -- | To Version
+  Version ->
+  t ->
+  Expectation
+roundTripRangeExpectation trip fromVersion toVersion t =
+  forM_ [fromVersion .. toVersion] $ \version ->
     case roundTrip version trip t of
       Left err -> expectationFailure $ "Failed to deserialize encoded: " ++ show err
       Right tDecoded -> tDecoded `shouldBe` t
@@ -107,7 +178,18 @@ roundTripCborExpectation ::
   (Show t, Eq t, ToCBOR t, FromCBOR t, HasCallStack) =>
   t ->
   Expectation
-roundTripCborExpectation = roundTripExpectation (cborTrip @t)
+roundTripCborExpectation = roundTripExpectation (cborTrip @t @t)
+
+roundTripCborRangeExpectation ::
+  forall t.
+  (Show t, Eq t, ToCBOR t, FromCBOR t, HasCallStack) =>
+  -- | From Version
+  Version ->
+  -- | To Version
+  Version ->
+  t ->
+  Expectation
+roundTripCborRangeExpectation = roundTripRangeExpectation (cborTrip @t)
 
 roundTripAnnExpectation ::
   (Show t, Eq t, ToCBOR t, FromCBOR (Annotator t), HasCallStack) =>

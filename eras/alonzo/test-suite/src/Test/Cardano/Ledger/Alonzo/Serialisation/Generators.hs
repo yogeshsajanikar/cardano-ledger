@@ -65,7 +65,7 @@ import Cardano.Ledger.Mary.Value (MultiAsset)
 import Cardano.Ledger.Shelley.PParams (Update)
 import Cardano.Ledger.Shelley.TxBody (DCert)
 import Cardano.Ledger.TxIn (TxIn)
-import Cardano.Ledger.Val (DecodeNonNegative, Val)
+import Cardano.Ledger.Val (Val)
 import Codec.CBOR.Term (Term (..))
 import Control.State.Transition (PredicateFailure)
 import Data.Either (fromRight)
@@ -414,7 +414,7 @@ instance Arbitrary AlonzoGenesis where
       <*> arbitrary
       <*> arbitrary
 
-instance (Era era, Val (Value era), DecodeNonNegative (Value era)) => Twiddle (AlonzoTxOut era) where
+instance (Era era, Val (Value era)) => Twiddle (AlonzoTxOut era) where
   twiddle v = twiddle v . toTerm v
 
 instance Twiddle SlotNo where

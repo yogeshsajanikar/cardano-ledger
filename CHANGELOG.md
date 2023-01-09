@@ -63,6 +63,7 @@ in the naming of release branches.
 
 ### Changed
 
+- Disallow decoding a 0-value `MultiAsset` in the de-serialization. #3241
 - Moved `PreviousEra` into `Era` type class. Added `Era` instance for a new data type
   `ByronEra`.
 - Renamed record fields for all `PParams` types. Too many to list, but follows the same

@@ -49,7 +49,7 @@ import qualified Data.Map.Strict as Map
 import qualified Data.Sequence.Strict as StrictSeq
 import qualified Data.Set as Set
 import Lens.Micro
-import Test.Cardano.Ledger.Binary.RoundTrip (roundTripFailureExpectation)
+import Test.Cardano.Ledger.Binary.RoundTrip (roundTripFailureCborExpectation')
 import Test.Cardano.Ledger.Shelley.Generator.EraGen (genesisId)
 import Test.Cardano.Ledger.Shelley.Serialisation.GoldenUtils (
   ToTokens (..),
@@ -427,7 +427,7 @@ goldenEncodingTestsMary =
 
 assetName32Bytes :: Assertion
 assetName32Bytes =
-  roundTripFailureExpectation (eraProtVerHigh @Mary) $
+  roundTripFailureCborExpectation' (eraProtVerHigh @Mary) $
     AssetName "123456789-123456789-123456789-123"
 
 -- | Golden Tests for Allegra and Mary
