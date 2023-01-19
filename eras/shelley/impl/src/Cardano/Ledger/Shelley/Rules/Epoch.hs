@@ -25,7 +25,7 @@ import Cardano.Ledger.Coin (Coin (..))
 import Cardano.Ledger.Core
 import Cardano.Ledger.EpochBoundary (SnapShots)
 import Cardano.Ledger.Shelley.Era (ShelleyEPOCH)
-import Cardano.Ledger.Shelley.LedgerState (EpochState, LedgerState, PState (..), UTxOState (utxosDeposited, utxosPpups), UpecState (..), asReserves, esAccountState, esLState, esNonMyopic, esPp, esPrevPp, esSnapshots, lsDPState, lsUTxOState, obligationDPState, pattern DPState, pattern EpochState)
+import Cardano.Ledger.Shelley.LedgerState (EpochState, PState (..), UTxOState (utxosDeposited, utxosPpups), UpecState (..), asReserves, esAccountState, esLState, esNonMyopic, esPp, esPrevPp, esSnapshots, lsDPState, lsUTxOState, obligationDPState, pattern DPState, pattern EpochState)
 import Cardano.Ledger.Shelley.Rewards ()
 import Cardano.Ledger.Shelley.Rules.PoolReap (
   ShelleyPOOLREAP,
@@ -33,7 +33,7 @@ import Cardano.Ledger.Shelley.Rules.PoolReap (
   ShelleyPoolreapPredFailure,
   ShelleyPoolreapState (..),
  )
-import Cardano.Ledger.Shelley.Rules.Snap (ShelleySNAP, ShelleySnapPredFailure, SnapEvent)
+import Cardano.Ledger.Shelley.Rules.Snap (ShelleySNAP, ShelleySnapPredFailure, SnapEnv (..), SnapEvent)
 import Cardano.Ledger.Shelley.Rules.Upec (ShelleyUPEC, ShelleyUpecPredFailure)
 import Cardano.Ledger.Slot (EpochNo)
 import Control.SetAlgebra (eval, (⨃))
@@ -79,7 +79,7 @@ data ShelleyEpochEvent era
 instance
   ( EraTxOut era
   , Embed (EraRule "SNAP" era) (ShelleyEPOCH era)
-  , Environment (EraRule "SNAP" era) ~ LedgerState era
+  , Environment (EraRule "SNAP" era) ~ SnapEnv era
   , State (EraRule "SNAP" era) ~ SnapShots (EraCrypto era)
   , Signal (EraRule "SNAP" era) ~ ()
   , Embed (EraRule "POOLREAP" era) (ShelleyEPOCH era)
@@ -113,7 +113,7 @@ instance
 epochTransition ::
   forall era.
   ( Embed (EraRule "SNAP" era) (ShelleyEPOCH era)
-  , Environment (EraRule "SNAP" era) ~ LedgerState era
+  , Environment (EraRule "SNAP" era) ~ SnapEnv era
   , State (EraRule "SNAP" era) ~ SnapShots (EraCrypto era)
   , Signal (EraRule "SNAP" era) ~ ()
   , Embed (EraRule "POOLREAP" era) (ShelleyEPOCH era)
@@ -143,7 +143,7 @@ epochTransition = do
   let utxoSt = lsUTxOState ls
   let DPState dstate pstate = lsDPState ls
   ss' <-
-    trans @(EraRule "SNAP" era) $ TRC (ls, ss, ())
+    trans @(EraRule "SNAP" era) $ TRC ((SnapEnv ls pp), ss, ())
 
   let PState pParams fPParams _ _ = pstate
       ppp = eval (pParams ⨃ fPParams)
