@@ -35,7 +35,7 @@ module Test.Cardano.Ledger.Shelley.Rules.TestChain (
 where
 
 import Cardano.Ledger.Address (Addr (..))
-import Cardano.Ledger.BaseTypes (Globals, StrictMaybe (..))
+import Cardano.Ledger.BaseTypes (Globals, ProtVer (..), StrictMaybe (..), natVersion)
 import Cardano.Ledger.Block (
   Block (..),
   bbody,
@@ -134,6 +134,7 @@ import Data.Word (Word64)
 import Lens.Micro hiding (ix)
 import Lens.Micro.Extras (view)
 import Test.Cardano.Ledger.Shelley.Generator.Block (tickChainState)
+import Test.Cardano.Ledger.Shelley.Generator.Constants (defaultConstants)
 import Test.Cardano.Ledger.Shelley.Generator.Core (GenEnv)
 import Test.Cardano.Ledger.Shelley.Generator.EraGen (EraGen (..))
 import qualified Test.Cardano.Ledger.Shelley.Generator.Presets as Preset (genEnv)
@@ -1391,19 +1392,26 @@ ledgerStateFromChainState = esLState . nesEs . chainNes
 
 testIncrementalStake ::
   forall era.
-  EraTxOut era =>
+  EraGen era =>
   LedgerState era ->
   LedgerState era ->
   Property
 testIncrementalStake _ (LedgerState (UTxOState utxo _ _ _ incStake) (DPState dstate pstate)) =
-  let stake = stakeDistr @era utxo dstate pstate
-
-      istake = incrementalStakeDistr @(EraCrypto era) incStake dstate pstate
-   in counterexample
-        ( "\nIncremental stake distribution does not match old style stake distribution"
-            ++ tersediffincremental "differences: Old vs Incremental" (ssStake stake) (ssStake istake)
-        )
-        (stake === istake)
+  ( TQC.forAll
+      ( TQC.suchThat
+          (genEraPParams @era defaultConstants)
+          (\pp -> pvMajor (pp ^. ppProtocolVersionL) <= natVersion @9)
+      )
+  )
+    $ \pp ->
+      do
+        let stake = stakeDistr @era utxo dstate pstate
+            istake = incrementalStakeDistr @(EraCrypto era) pp incStake dstate pstate
+        counterexample
+          ( "\nIncremental stake distribution does not match old style stake distribution"
+              ++ tersediffincremental "differences: Old vs Incremental" (ssStake stake) (ssStake istake)
+          )
+          (stake === istake)
 
 incrementalStakeProp ::
   forall era.
