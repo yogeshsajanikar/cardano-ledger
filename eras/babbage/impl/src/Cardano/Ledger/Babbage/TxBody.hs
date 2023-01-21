@@ -127,6 +127,7 @@ import Cardano.Ledger.BaseTypes (
  )
 import Cardano.Ledger.Binary (
   Annotator (..),
+  EncCBOR (..),
   FromCBOR (..),
   Sized (..),
   ToCBOR (..),
@@ -207,8 +208,7 @@ deriving instance
   Show (BabbageTxBodyRaw era)
 
 newtype BabbageTxBody era = TxBodyConstr (MemoBytes BabbageTxBodyRaw era)
-  deriving (ToCBOR)
-  deriving newtype (SafeToHash)
+  deriving newtype (SafeToHash, EncCBOR)
 
 instance Memoized BabbageTxBody where
   type RawType BabbageTxBody = BabbageTxBodyRaw
