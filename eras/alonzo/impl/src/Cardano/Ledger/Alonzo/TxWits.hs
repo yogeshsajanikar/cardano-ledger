@@ -55,7 +55,7 @@ import Cardano.Crypto.DSIGN.Class (SigDSIGN, VerKeyDSIGN)
 import Cardano.Crypto.Hash.Class (HashAlgorithm)
 import Cardano.Ledger.Alonzo.Era (AlonzoEra)
 import Cardano.Ledger.Alonzo.Language (Language (..))
-import Cardano.Ledger.Alonzo.Scripts (AlonzoScript (..), ExUnits (..), Tag)
+import Cardano.Ledger.Alonzo.Scripts (AlonzoScript (..), ExUnits (..), Tag (Spend))
 import Cardano.Ledger.Alonzo.Scripts.Data (Data, hashData)
 import Cardano.Ledger.Binary (
   Annotator,
@@ -136,7 +136,7 @@ instance Typeable era => ToCBOR (RedeemersRaw era) where
   toCBOR (RedeemersRaw rs) = encodeFoldableEncoder keyValueEncoder $ Map.toAscList rs
     where
       keyValueEncoder (ptr, (dats, exs)) =
-        encodeListLen 4
+        encodeListLen (listLen ptr + 2)
           <> toCBORGroup ptr
           <> toCBOR dats
           <> toCBOR exs
@@ -486,7 +486,15 @@ instance
       dec = do
         entries <- fmap sequence
           . decodeList
-          . decodeRecordNamed "redeemer" (const 4)
+          . decodeRecordNamed
+            "redeemer"
+            ( const
+                ( 2
+                    +
+                    {- This is a dummy value, but it enforces getting the correct listLen for the FromCBORGroup of RdmrPtr -}
+                    fromIntegral (listLen (RdmrPtr Spend 1))
+                )
+            )
           $ do
             rdmrPtr <- fromCBORGroup
             dat <- fromCBOR
