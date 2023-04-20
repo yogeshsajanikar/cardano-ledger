@@ -1,0 +1,66 @@
+= Cardano Ledger Repository Hackage Documentation
+
+[skip to module list](#module-list)
+
+This site contains Haskell documentation of:
+
+* __[byron-spec-chain](byron-spec-chain/index.html)__
+* __[byron-spec-chain:chain-rules-test](byron-spec-chain%3Achain-rules-test/index.html)__
+* __[byron-spec-ledger](byron-spec-ledger/index.html)__
+* __[byron-spec-ledger:byron-spec-ledger-test](byron-spec-ledger%3Abyron-spec-ledger-test/index.html)__
+* __[cardano-crypto-test](cardano-crypto-test/index.html)__
+* __[cardano-crypto-wrapper](cardano-crypto-wrapper/index.html)__
+* __[cardano-crypto-wrapper:test](cardano-crypto-wrapper%3Atest/index.html)__
+* __[cardano-data](cardano-data/index.html)__
+* __[cardano-data:cardano-data-tests](cardano-data%3Acardano-data-tests/index.html)__
+* __[cardano-data:testlib](cardano-data%3Atestlib/index.html)__
+* __[cardano-ledger-allegra](cardano-ledger-allegra/index.html)__
+* __[cardano-ledger-allegra:testlib](cardano-ledger-allegra%3Atestlib/index.html)__
+* __[cardano-ledger-alonzo](cardano-ledger-alonzo/index.html)__
+* __[cardano-ledger-alonzo-test](cardano-ledger-alonzo-test/index.html)__
+* __[cardano-ledger-alonzo-test:cardano-ledger-alonzo-test](cardano-ledger-alonzo-test%3Acardano-ledger-alonzo-test/index.html)__
+* __[cardano-ledger-alonzo:testlib](cardano-ledger-alonzo%3Atestlib/index.html)__
+* __[cardano-ledger-api](cardano-ledger-api/index.html)__
+* __[cardano-ledger-api:cardano-ledger-api-test](cardano-ledger-api%3Acardano-ledger-api-test/index.html)__
+* __[cardano-ledger-babbage](cardano-ledger-babbage/index.html)__
+* __[cardano-ledger-babbage-test](cardano-ledger-babbage-test/index.html)__
+* __[cardano-ledger-babbage-test:cardano-ledger-babbage-test](cardano-ledger-babbage-test%3Acardano-ledger-babbage-test/index.html)__
+* __[cardano-ledger-babbage:testlib](cardano-ledger-babbage%3Atestlib/index.html)__
+* __[cardano-ledger-binary](cardano-ledger-binary/index.html)__
+* __[cardano-ledger-binary:testlib](cardano-ledger-binary%3Atestlib/index.html)__
+* __[cardano-ledger-binary:tests](cardano-ledger-binary%3Atests/index.html)__
+* __[cardano-ledger-byron](cardano-ledger-byron/index.html)__
+* __[cardano-ledger-byron-test](cardano-ledger-byron-test/index.html)__
+* __[cardano-ledger-byron:cardano-ledger-byron-test](cardano-ledger-byron%3Acardano-ledger-byron-test/index.html)__
+* __[cardano-ledger-conway](cardano-ledger-conway/index.html)__
+* __[cardano-ledger-conway-test](cardano-ledger-conway-test/index.html)__
+* __[cardano-ledger-conway-test:cardano-ledger-conway-test](cardano-ledger-conway-test%3Acardano-ledger-conway-test/index.html)__
+* __[cardano-ledger-conway:testlib](cardano-ledger-conway%3Atestlib/index.html)__
+* __[cardano-ledger-core](cardano-ledger-core/index.html)__
+* __[cardano-ledger-core:testlib](cardano-ledger-core%3Atestlib/index.html)__
+* __[cardano-ledger-core:tests](cardano-ledger-core%3Atests/index.html)__
+* __[cardano-ledger-mary](cardano-ledger-mary/index.html)__
+* __[cardano-ledger-mary:testlib](cardano-ledger-mary%3Atestlib/index.html)__
+* __[cardano-ledger-mary:tests](cardano-ledger-mary%3Atests/index.html)__
+* __[cardano-ledger-pretty](cardano-ledger-pretty/index.html)__
+* __[cardano-ledger-shelley](cardano-ledger-shelley/index.html)__
+* __[cardano-ledger-shelley-ma](cardano-ledger-shelley-ma/index.html)__
+* __[cardano-ledger-shelley-ma-test](cardano-ledger-shelley-ma-test/index.html)__
+* __[cardano-ledger-shelley-ma-test:cardano-ledger-shelley-ma-test](cardano-ledger-shelley-ma-test%3Acardano-ledger-shelley-ma-test/index.html)__
+* __[cardano-ledger-shelley-test](cardano-ledger-shelley-test/index.html)__
+* __[cardano-ledger-shelley-test:cardano-ledger-shelley-test](cardano-ledger-shelley-test%3Acardano-ledger-shelley-test/index.html)__
+* __[cardano-ledger-shelley:testlib](cardano-ledger-shelley%3Atestlib/index.html)__
+* __[cardano-ledger-shelley:tests](cardano-ledger-shelley%3Atests/index.html)__
+* __[cardano-ledger-test](cardano-ledger-test/index.html)__
+* __[cardano-protocol-tpraos](cardano-protocol-tpraos/index.html)__
+* __[cardano-protocol-tpraos:testlib](cardano-protocol-tpraos%3Atestlib/index.html)__
+* __[ledger-state](ledger-state/index.html)__
+* __[non-integral](non-integral/index.html)__
+* __[non-integral:non-integral-test](non-integral%3Anon-integral-test/index.html)__
+* __[set-algebra](set-algebra/index.html)__
+* __[set-algebra:tests](set-algebra%3Atests/index.html)__
+* __[small-steps](small-steps/index.html)__
+* __[small-steps-test](small-steps-test/index.html)__
+* __[small-steps-test:examples](small-steps-test%3Aexamples/index.html)__
+* __[vector-map](vector-map/index.html)__
+* __[vector-map:tests](vector-map%3Atests/index.html)__
